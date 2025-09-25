@@ -1,6 +1,6 @@
-# LogART: Learnable Logarithmic Adaptive Rounding Techniques for Post-Training Quantization
+# LOGART: PUSHING THE LIMIT OF EFFICIENT LOGARITHMIC POST-TRAINING QUANTIZATION
 
-This repository contains the official PyTorch implementation for the paper *"LogART: Learnable Logarithmic Adaptive Rounding Techniques for Post-Training Quantization"*.
+This repository contains the official PyTorch implementation for the paper *"LogART: Pushing The Limit Of Efficient Logarithmic Post-training Quantization"*.
 
 ## Get Started
 
@@ -27,7 +27,6 @@ This repository contains the official PyTorch implementation for the paper *"Log
    ```bash
    cd LogART/LogART-ViT
    ```
-
 
 2. **Install PyTorch**:
 
@@ -102,9 +101,9 @@ python main.py --model_path facebook/opt-125m --calib_data c4 --nsamples 32 --se
 - `--w_bits`: Bitwidth for weight quantization.
 - `--iters_w`: Number of iterations in learnable rounding reconstruction.
 - `--lr`: AdaRound hyperparameters.
-- `--scale_method`: Quantization method. Choices: `linear_mse`, `linear_minmax`, `log_2`, `log_sqrt2`, `log_dynamic`.
+- `--scale_method`: Quantization method. Choices: `log_2`, `log_sqrt2`, `log_dynamic`.
 - `--rrweight`: Weight of rounding cost vs the reconstruction loss.
-- `--hardware_approx`: Apply `1+1/2` hardware approximation method to \sqrt{2}.
+- `--hardware_approx`: Apply `1+1/2` hardware approximation method to $\sqrt{2}$.
 - `--learn_rounding`: whether to learn weight-rounding policy based on AdaRound.
 
 ### LogART-CNN
@@ -126,7 +125,7 @@ python main.py --data_path DATA_DIR --arch resnet18 --n_bits_w 3 --channel_wise 
 - `--test_before_calibration`: Test the quantization accuracy after hyperparameter searching and before reconstruction.
 - `--iters_w`: Number of iterations in learnable rounding reconstruction.
 - `--rrweight`: Weight of rounding cost vs the reconstruction loss.
-- `--hardware_approx`: Apply hardware-level log \sqrt{2} approximation to `1+1/2`.
+- `--hardware_approx`: Apply hardware-level log $\sqrt{2}$ approximation to `1+1/2`.
 
 ### LogART-ViT
 The code for LogART-ViT was modified based on [APHQ](https://github.com/GoatWu/APHQ-ViT). To quantize and evaluate a single ViT model, use the following command:
@@ -144,27 +143,244 @@ python main.py --dataset DATA_DIR --model vit_base --config ./configs/4bit/best.
 - `--iters_w`: Number of iterations in learnable rounding reconstruction.
 - `--scale_method`: Quantization method. Choices: `linear_mse`, `linear_minmax`, `log_2`, `log_sqrt2`, `log_dynamic`.
 - `--rrweight`: Weight of rounding cost vs the reconstruction loss.
-- `--hardware_approx`: Apply `1+1/2` hardware approximation method to \sqrt{2}.
+- `--hardware_approx`: Apply `1+1/2` hardware approximation method to $\sqrt{2}$.
 
 ## Results
 Results will be stored in `./results.csv`. The ablation results of LogART's key components on LLMs with 3-bit channel-wise weight quantization are shown in the table below:
 
-| DBS  | SFS | ABS | LLR | Calib. Data |                       OPT-125M                         |                       LLaMA2-7B                        |
-|      |     |     |     |             |       PPL       |       Time       |       Memory      |       PPL       |       Time       |       Memory      |
-|------|-----|-----|-----|-------------|-----------------|------------------|-------------------|-----------------|------------------|-------------------|
-|×     |×    |×    |×    |-            |170.64           |0.7 s             |0.40 GB            |60.16            |13.0 s            |9.8 GB             |
-|×     |×    |×    |✓    |32           |38.55            |61.3 s            |0.75 GB            |9.74             |58.6 min          |20.9 GB            |
-|×     |×    |✓    |×    |-            |79.7             |0.7 s             |0.40 GB            |8.28             |13.2 s            |9.8 GB             |
-|×     |×    |✓    |✓    |32           |36.39            |61.3 s            |0.75 GB            |9.16             |58.2 min          |20.9 GB            |
-|×     |✓    |×    |×    |32           |38.41            |12.1 s            |0.75 GB            |6.66             |6.6 min           |20.9 GB            |
-|×     |✓    |×    |✓    |32           |33.21            |64.6 s            |0.75 GB            |6.24             |63.1 min          |20.9 GB            |
-|×     |✓    |✓    |×    |32           |35.15            |12.2 s            |0.75 GB            |6.55             |6.6 min           |20.9 GB            |
-|×     |✓    |✓    |✓    |32           |32.55            |64.6 s            |0.75 GB            |6.23             |63.5 min          |20.9 GB            |
-|✓     |×    |×    |×    |32           |66.63            |3.8 s             |0.75 GB            |18.49            |83.2 s            |20.9 GB            |
-|✓     |×    |×    |✓    |32           |35.46            |62.7 s            |0.75 GB            |9.26             |59.0 min          |20.9 GB            |
-|✓     |×    |✓    |×    |32           |47.92            |3.8 s             |0.75 GB            |7.82             |82.2 s            |20.9 GB            |
-|✓     |×    |✓    |✓    |32           |33.68           |62.9 s             |0.75 GB            |9.10            |59.1 min           |20.9 GB            |
-|✓     |✓    |×    |×    |32           |36.10           |16.8 s             |0.75 GB            |6.56            |17.9 min           |20.9 GB            |
-|✓     |✓    |×    |✓    |32           |32.37           |75.0 s             |0.75 GB            |6.19            |73.7 min           |20.9 GB            |
-|✓     |✓    |×    |×    |32           |34.29           |17.0 s             |0.75 GB            |6.45            |17.9 min           |20.9 GB            |
-|✓     |✓    |✓    |✓    |32           |31.15           |75.1 s             |0.75 GB            |6.14            |74.2 min           |20.9 GB            |
+<table>
+    <tr>
+        <td>DBS</td>
+        <td>SFS</td>
+        <td>ABS</td>
+        <td>LLR</td>
+        <td>Calib. Data</td>
+        <td>OPT-125M</td>
+        <td></td>
+        <td></td>
+        <td>LLaMA2-7B</td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td>PPL</td>
+        <td>Time</td>
+        <td>Memory</td>
+        <td>PPL</td>
+        <td>Time</td>
+        <td>Memory</td>
+    </tr>
+    <tr>
+        <td>×</td>
+        <td>×</td>
+        <td>×</td>
+        <td>×</td>
+        <td>-</td>
+        <td>170.64</td>
+        <td>0.7 s</td>
+        <td>0.40 GB</td>
+        <td>60.16</td>
+        <td>13.0 s</td>
+        <td>9.8 GB</td>
+    </tr>
+    <tr>
+        <td>×</td>
+        <td>×</td>
+        <td>×</td>
+        <td>✓</td>
+        <td>32</td>
+        <td>38.55</td>
+        <td>61.3 s</td>
+        <td>0.75 GB</td>
+        <td>9.74</td>
+        <td>58.6 min</td>
+        <td>20.9 GB</td>
+    </tr>
+    <tr>
+        <td>×</td>
+        <td>×</td>
+        <td>✓</td>
+        <td>×</td>
+        <td>-</td>
+        <td>79.7</td>
+        <td>0.7 s</td>
+        <td>0.40 GB</td>
+        <td>8.28</td>
+        <td>13.2 s</td>
+        <td>9.8 GB</td>
+    </tr>
+    <tr>
+        <td>×</td>
+        <td>×</td>
+        <td>✓</td>
+        <td>✓</td>
+        <td>32</td>
+        <td>36.39</td>
+        <td>61.3 s</td>
+        <td>0.75 GB</td>
+        <td>9.16</td>
+        <td>58.2 min</td>
+        <td>20.9 GB</td>
+    </tr>
+    <tr>
+        <td>×</td>
+        <td>✓</td>
+        <td>×</td>
+        <td>×</td>
+        <td>32</td>
+        <td>38.41</td>
+        <td>12.1 s</td>
+        <td>0.75 GB</td>
+        <td>6.66</td>
+        <td>6.6 min</td>
+        <td>20.9 GB</td>
+    </tr>
+    <tr>
+        <td>×</td>
+        <td>✓</td>
+        <td>×</td>
+        <td>✓</td>
+        <td>32</td>
+        <td>33.21</td>
+        <td>64.6 s</td>
+        <td>0.75 GB</td>
+        <td>6.24</td>
+        <td>63.1 min</td>
+        <td>20.9 GB</td>
+    </tr>
+    <tr>
+        <td>×</td>
+        <td>✓</td>
+        <td>✓</td>
+        <td>×</td>
+        <td>32</td>
+        <td>35.15</td>
+        <td>12.2 s</td>
+        <td>0.75 GB</td>
+        <td>6.55</td>
+        <td>6.6 min</td>
+        <td>20.9 GB</td>
+    </tr>
+    <tr>
+        <td>×</td>
+        <td>✓</td>
+        <td>✓</td>
+        <td>✓</td>
+        <td>32</td>
+        <td>32.55</td>
+        <td>64.6 s</td>
+        <td>0.75 GB</td>
+        <td>6.23</td>
+        <td>63.5 min</td>
+        <td>20.9 GB</td>
+    </tr>
+    <tr>
+        <td>✓</td>
+        <td>×</td>
+        <td>×</td>
+        <td>×</td>
+        <td>32</td>
+        <td>66.63</td>
+        <td>3.8 s</td>
+        <td>0.75 GB</td>
+        <td>18.49</td>
+        <td>83.2 s</td>
+        <td>20.9 GB</td>
+    </tr>
+    <tr>
+        <td>✓</td>
+        <td>×</td>
+        <td>×</td>
+        <td>✓</td>
+        <td>32</td>
+        <td>35.46</td>
+        <td>62.7 s</td>
+        <td>0.75 GB</td>
+        <td>9.26</td>
+        <td>59.0 min</td>
+        <td>20.9 GB</td>
+    </tr>
+    <tr>
+        <td>✓</td>
+        <td>×</td>
+        <td>✓</td>
+        <td>×</td>
+        <td>32</td>
+        <td>47.92</td>
+        <td>3.8 s</td>
+        <td>0.75 GB</td>
+        <td>7.82</td>
+        <td>82.2 s</td>
+        <td>20.9 GB</td>
+    </tr>
+    <tr>
+        <td>✓</td>
+        <td>×</td>
+        <td>✓</td>
+        <td>✓</td>
+        <td>32</td>
+        <td>33.68</td>
+        <td>62.9 s</td>
+        <td>0.75 GB</td>
+        <td>9.1</td>
+        <td>59.1 min</td>
+        <td>20.9 GB</td>
+    </tr>
+    <tr>
+        <td>✓</td>
+        <td>✓</td>
+        <td>×</td>
+        <td>×</td>
+        <td>32</td>
+        <td>36.1</td>
+        <td>16.8 s</td>
+        <td>0.75 GB</td>
+        <td>6.56</td>
+        <td>17.9 min</td>
+        <td>20.9 GB</td>
+    </tr>
+    <tr>
+        <td>✓</td>
+        <td>✓</td>
+        <td>×</td>
+        <td>✓</td>
+        <td>32</td>
+        <td>32.37</td>
+        <td>75.0 s</td>
+        <td>0.75 GB</td>
+        <td>6.19</td>
+        <td>73.7 min</td>
+        <td>20.9 GB</td>
+    </tr>
+    <tr>
+        <td>✓</td>
+        <td>✓</td>
+        <td>×</td>
+        <td>×</td>
+        <td>32</td>
+        <td>34.29</td>
+        <td>17.0 s</td>
+        <td>0.75 GB</td>
+        <td>6.45</td>
+        <td>17.9 min</td>
+        <td>20.9 GB</td>
+    </tr>
+    <tr>
+        <td>✓</td>
+        <td>✓</td>
+        <td>✓</td>
+        <td>✓</td>
+        <td>32</td>
+        <td>31.15</td>
+        <td>75.1 s</td>
+        <td>0.75 GB</td>
+        <td>6.14</td>
+        <td>74.2 min</td>
+        <td>20.9 GB</td>
+    </tr>
+</table>
