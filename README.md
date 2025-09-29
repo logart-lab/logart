@@ -88,7 +88,7 @@ mv deit_tiny_patch16_224.bin ./checkpoint/vit_raw/
 The code for LogART-LLM was modified based on [aespa](https://github.com/SamsungLabs/aespa). To quantize and evaluate the LLM, use the following command:
 
 ```bash
-python main.py --model_path facebook/opt-125m --calib_data c4 --nsamples 32 --seqlen 2048 --seed 0 --w_bits 3 --iters_w 500 --lr 0.05 --scale-method log_dynamic --rrweight 1 [--hardware_approx] --learn_rounding
+python main.py --model_path facebook/opt-125m --calib_data c4 --nsamples 32 --seqlen 2048 --seed 0 --w_bits 3 --num_iters 500 --lr 0.05 --w_method log_dynamic -scale_search --rrweight 1 [--hardware_approx] --learn_rounding [--test_with_hardware_approx]
     
 ```
 
@@ -99,51 +99,60 @@ python main.py --model_path facebook/opt-125m --calib_data c4 --nsamples 32 --se
 - `--seqlen`: Sequence length of the input text processed by the model.
 - `--seed`: Random seed for ensuring reproducibility of experiments.
 - `--w_bits`: Bitwidth for weight quantization.
-- `--iters_w`: Number of iterations in learnable rounding reconstruction.
-- `--lr`: AdaRound hyperparameters.
-- `--scale_method`: Quantization method. Choices: `log_2`, `log_sqrt2`, `log_dynamic`.
+- `--num_iters`: Number of iterations in learnable rounding reconstruction.
+- `--lr`: Adaptive rounding learning rate.
+- `--w_method`: Quantization method. Choices: `log_2`, `log_sqrt2`, `log_dynamic`.
+- `--scale_search`: Whether to search for the best scaling factor.
 - `--rrweight`: Weight of rounding cost vs the reconstruction loss.
 - `--hardware_approx`: Apply `1+1/2` hardware approximation method to $\sqrt{2}$.
-- `--learn_rounding`: whether to learn weight-rounding policy based on AdaRound.
+- `--learn_rounding`: Whether to learn weight-rounding policy based on AdaRound.
+- `--test_with_hardware_approx`: Whether to test the quantized model with hardware approximation. 
 
 ### LogART-CNN
 The code for LogART-CNN was modified based on [BRECQ](https://github.com/yhhhli/BRECQ). To quantize and evaluate a single CNN model, use the following command:
 
 ```bash
-python main.py --data_path DATA_DIR --arch resnet18 --n_bits_w 3 --channel_wise --scale_method log_dynamic --search_method tensor_wise --search_samples 32 [--test_before_calibration] --iters_w 2000 --lr 0.05--weight 1 [--hardware_approx] 
+python main.py --data_path DATA_DIR --arch resnet18 -seed 0 --n_bits_w 4 --channel_wise --scale_method log_dynamic --search_method layer_wise --search_samples 32 [--test_before_calibration] --iters_w 2000 --calib_lr 0.05 --weight 1 [--hardware_approx] [--test_with_hardware_approx]
  
 ```
 
 #### Command-Line Arguments
 - `--data_path`: Path to ImageNet data.
 - `--arch`: Model architecture to use. Choices: `resnet18`, `resnet50`, `mobilenetv2`.
+- `--seed`: Random seed for ensuring reproducibility of experiments.
 - `--n_bits_w`: Bitwidth for weight quantization.
 - `--channel_wise`: Enable channel-wise quantization for weights.
 - `--scale_method`: Linear quantization method or logarithmic base. Choices: `linear_mse`, `linear_minmax`, `log_2`, `log_sqrt2`, `log_dynamic`.
-- `--search_method`: Dynamic base search method of the hyperparameter searching process for dynamic logarithmic quantization.
+- `--search_method`: Dynamic base search method of the hyperparameter searching process for dynamic logarithmic quantization. Choices: 'tensor_wise', 'layer_wise'.
 - `--search_samples`: Size of the hyperparameter searching dataset.
 - `--test_before_calibration`: Test the quantization accuracy after hyperparameter searching and before reconstruction.
 - `--iters_w`: Number of iterations in learnable rounding reconstruction.
-- `--rrweight`: Weight of rounding cost vs the reconstruction loss.
+- `--calib_lr`: Adaptive rounding learning rate.
+- `--weight`: Weight of rounding cost vs the reconstruction loss.
 - `--hardware_approx`: Apply hardware-level log $\sqrt{2}$ approximation to `1+1/2`.
+- `--test_with_hardware_approx`: Whether to test the quantized model with hardware approximation. 
 
 ### LogART-ViT
 The code for LogART-ViT was modified based on [APHQ](https://github.com/GoatWu/APHQ-ViT). To quantize and evaluate a single ViT model, use the following command:
 
 ```bash
-python main.py --dataset DATA_DIR --model vit_base --config ./configs/4bit/best.py --iters_w 2000 --lr 0.05 --scale-method log_dynamic --rrweight 1 [--hardware_approx][--optimize]
+python main.py --dataset DATA_DIR --model vit_base -seed 0 --config ./configs/4bit/best.py --iters_w 2000 --lr 0.05 --scale-method log_dynamic -search_method block_wise --rrweight 1 [--hardware_approx] [--optimize] [--test_with_hardware_approx]
 
 ```
 
 #### Command-Line Arguments
 - `--dataset`: Path to the dataset.
 - `--model`: Model architecture. Choices: `vit_tiny`, `vit_small`, `vit_base`, `vit_large`, `deit_tiny`, `deit_small`, `deit_base`.
+- `--seed`: Random seed for ensuring reproducibility of experiments.
 - `--config`: File path to import the Config class.
 - `--optimize`: Perform learnable rounding reconstruction to the model.
 - `--iters_w`: Number of iterations in learnable rounding reconstruction.
-- `--scale_method`: Quantization method. Choices: `linear_mse`, `linear_minmax`, `log_2`, `log_sqrt2`, `log_dynamic`.
+- `--lr`: Adaptive rounding learning rate.
+- `--scale-method`: Quantization method. Choices: `linear_mse`, `linear_minmax`, `log_2`, `log_sqrt2`, `log_dynamic`.
+- `--search_method`: Dynamic base search method of the hyperparameter searching process for dynamic logarithmic quantization. Choices: 'tensor_wise', 'block_wise'.
 - `--rrweight`: Weight of rounding cost vs the reconstruction loss.
 - `--hardware_approx`: Apply `1+1/2` hardware approximation method to $\sqrt{2}$.
+- `--test_with_hardware_approx`: Whether to test the quantized model with hardware approximation. 
 
 ## Results
 Results will be stored in `./results.csv`. The ablation results of LogART's key components on LLMs with 3-bit channel-wise weight quantization are shown in the table below:
