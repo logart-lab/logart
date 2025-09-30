@@ -122,7 +122,7 @@ python main.py --data_path DATA_DIR --arch resnet18 -seed 0 --n_bits_w 4 --chann
 - `--seed`: Random seed for ensuring reproducibility of experiments.
 - `--n_bits_w`: Bitwidth for weight quantization.
 - `--channel_wise`: Enable channel-wise quantization for weights.
-- `--scale_method`: Linear quantization method or logarithmic base. Choices: `linear_mse`, `linear_minmax`, `log_2`, `log_sqrt2`, `log_dynamic`.
+- `--scale_method`: Linear quantization method or logarithmic base. Choices: `log_2`, `log_sqrt2`, `log_dynamic`.
 - `--search_method`: Dynamic base search method of the hyperparameter searching process for dynamic logarithmic quantization. Choices: 'tensor_wise', 'layer_wise'.
 - `--search_samples`: Size of the hyperparameter searching dataset.
 - `--test_before_calibration`: Test the quantization accuracy after hyperparameter searching and before reconstruction.
@@ -148,7 +148,7 @@ python main.py --dataset DATA_DIR --model vit_base -seed 0 --config ./configs/4b
 - `--optimize`: Perform learnable rounding reconstruction to the model.
 - `--iters_w`: Number of iterations in learnable rounding reconstruction.
 - `--lr`: Adaptive rounding learning rate.
-- `--scale-method`: Quantization method. Choices: `linear_mse`, `linear_minmax`, `log_2`, `log_sqrt2`, `log_dynamic`.
+- `--scale-method`: Quantization method. Choices: `log_2`, `log_sqrt2`, `log_dynamic`.
 - `--search_method`: Dynamic base search method of the hyperparameter searching process for dynamic logarithmic quantization. Choices: 'tensor_wise', 'block_wise'.
 - `--rrweight`: Weight of rounding cost vs the reconstruction loss.
 - `--hardware_approx`: Apply `1+1/2` hardware approximation method to $\sqrt{2}$.
