@@ -71,7 +71,8 @@ def log_quantize(x, scale, zero, method, code_map, level_map, asym_map, hardware
         x_log = torch.div(torch.log(torch.abs(x / scale) + 1e-32), torch.log(code_map))
         x_int = torch.round(x_log)
         # Clamp Low
-        x_clamp_1 = torch.clamp(x_int - zero, 0 - (1 + asym_map / 2) * code_map, math.inf * torch.ones_like(x))
+        code_map_bool = code_map == 2
+        x_clamp_1 = torch.clamp(x_int - zero, 0 - (1 + asym_map / 2) * code_map_bool, math.inf * torch.ones_like(x))
         del x_int, x_log
         torch.cuda.empty_cache()
         # Clamp High

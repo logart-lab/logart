@@ -86,7 +86,8 @@ class AdaRoundQuantizer(nn.Module):
 
         elif self.scale_method in {'log_2', 'log_dynamic'}:
             # Clamp Low
-            x_clamp_1 = torch.clamp(x_int - self.zero_point, 0 - (1 + self.asym_map / 2) * self.code_map, math.inf * torch.ones_like(x))
+            code_map_bool = self.code_map == 2
+            x_clamp_1 = torch.clamp(x_int - self.zero_point, 0 - (1 + self.asym_map / 2) * code_map_bool, math.inf * torch.ones_like(x))
             # Clamp High
             x_clamp = torch.clamp(x_clamp_1 - self.level_map, -math.inf, -1)
 
