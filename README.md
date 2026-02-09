@@ -1,6 +1,6 @@
 # LOGART: PUSHING THE LIMIT OF EFFICIENT LOGARITHMIC POST-TRAINING QUANTIZATION
 
-This repository contains the official PyTorch implementation for the paper *"LogART: Pushing The Limit of Efficient Logarithmic Post-training Quantization"*.
+This repository contains the official PyTorch implementation for the ICLR 2026 paper *"LogART: Pushing The Limit of Efficient Logarithmic Post-training Quantization"*.
 
 ## Get Started
 
@@ -402,3 +402,15 @@ Results will be stored in `./results.csv`. The ablation results of LogART's key 
         <td>20.9 GB</td>
     </tr>
 </table>
+
+## Citation
+If you find this work is useful for your research, please cite our paper:
+```bash
+@inproceedings{xu2026logart,
+title={Log{ART}: Pushing the Limit of Efficient Logarithmic Post-Training Quantization},
+author={Xu, Jiawei and Zheng, Yi and Sun, Chenghe and Zhou, Taiyu and Zhang, Zuqi and Li, Jie and Zheng, Lirong and Zou, Zhuo},
+booktitle={The Fourteenth International Conference on Learning Representations},
+year={2026},
+url={https://openreview.net/forum?id=V85HbymBLW}
+}
+```
