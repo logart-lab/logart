@@ -229,7 +229,7 @@ Results will be stored in `./results.csv`. The ablation results of LogART's key 
         <td>36.39</td>
         <td>61.3 s</td>
         <td>0.75 GB</td>
-        <td>9.16</td>
+        <td>6.44</td>
         <td>58.2 min</td>
         <td>20.9 GB</td>
     </tr>
@@ -341,7 +341,7 @@ Results will be stored in `./results.csv`. The ablation results of LogART's key 
         <td>33.68</td>
         <td>62.9 s</td>
         <td>0.75 GB</td>
-        <td>9.10</td>
+        <td>6.38</td>
         <td>59.1 min</td>
         <td>20.9 GB</td>
     </tr>
